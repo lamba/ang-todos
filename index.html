@@ -514,6 +514,7 @@
 									toastr.warning(success_data.error);
 								} else {
 									LoggedInUser.setEmail(vm.signinUser.email);
+								 	jQuery.cookie('email', LoggedInUser.getEmail(), {expires:365, httpOnly:false});
 									$location.path('#home');
 								};
 							},
@@ -776,6 +777,10 @@
 						});
 					});
 					//angular.element('.completed').checked('true');
+					
+					if (LoggedInUser.getRememberMe()) {
+						//set cookie here?
+					};
 
 					$scope.addTodo = function() {
 						console.log('addTodo with description:'+vm.newTodo);
