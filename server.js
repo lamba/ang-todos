@@ -2,7 +2,6 @@ var
   express,
 	http,
 	loginErrorMessage,
-	cookieParser,
 	session,
   port,
 	server,
@@ -15,14 +14,12 @@ var
 //link required node.js modules  
 express = require("express");	
 http = require("http");
-cookieParser = require("cookie-parser");
 session = require("express-session");
 
 port = 800;
 server = express();
 
 server.use(express.static(__dirname + "/"));
-server.use(cookieParser());
 server.use(session({
 	secret:'topsecret',
 	saveUninitialized:true,
