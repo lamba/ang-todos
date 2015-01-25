@@ -2,7 +2,7 @@
   "name": "Ang-Todos",
   "version": "0.2.0",
   "description": "Angular Todos",
-  "main": "app.js",
+  "main": "server.js",
   "dependencies": {
     "express": "^4.10.0",
 		"http": "0.0.0",

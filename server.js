@@ -5,7 +5,7 @@ var
 	cookieParser,
 	session,
   port,
-	app,
+	server,
 	todosVersion = "v0.2.0",
 	sid,
 
@@ -19,15 +19,15 @@ cookieParser = require("cookie-parser");
 session = require("express-session");
 
 port = 800;
-app = express();
+server = express();
 
-app.use(express.static(__dirname + "/"));
-app.use(cookieParser());
-app.use(session({
+server.use(express.static(__dirname + "/"));
+server.use(cookieParser());
+server.use(session({
 	secret:'topsecret',
 	saveUninitialized:true,
 	resave:true
 }));
 
-http.createServer(app).listen(process.env.PORT || port);
-console.log("App " + todosVersion + " is listening on port " + (process.env.PORT || port));
+http.createServer(server).listen(process.env.PORT || port);
+console.log("server " + todosVersion + " is listening on port " + (process.env.PORT || port));
