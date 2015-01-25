@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html ng-app="angTodos">
+	<head>
+		<title>AngularJS Todos</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" type="text/css" media="screen">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" type="text/css" media="screen">
+		<style type="text/css">
+			body { margin:1em 20%; width:60%; }
+			.container, .menu, .httptodos { width:100%; }
+			.nav { margin:.5em 0em; }
+			li { list-style:none; }
+			ul { list-style-type:none; padding-left:0; }
+			.row { border:1px solid #777; border-radius:5px 5px 5px 5px; margin:.5% .5%; width:99%; }
+			.add-todo { margin: 2% 0%; width:35em; }
+			.input-group { width:100%; }
+			[class*="col-"] { padding-top:.7em; } /* apply css to all col-md-1,2,... */
+			.odd { background:#ccc; }
+			.even { background:#eee; }
+			.completed { text-decoration:line-through; color:#888 }
+			.contacts li { list-style:square; padding-bottom:1em; }
+			.contacts ul { padding-left:1em; }
+			/*input [type="text"]:checked { text-decoration:line-through; }*/
+			/*[contenteditable] { border: 1px solid black; background-color: white; min-height: 20px; }*/
+			/*[contenteditable]:focus { border-style: dashed; border-color: black; border-width: 3px; }*/
+			/*.ng-invalid { border: 1px solid red; }*/
+		</style>
+	</head>
+	<body>
+		<!--
+		<script 
+			type="text/javascript"
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js">
+		</script>
+		-->
+		<!-- 
+			1. use non minified libs in non-prod envs for better error messages 
+			2. seems to want http/https prefix on this project even though the todos project doesn't seem to care
+		-->
+		<script type="text/javascript"
+			src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js">
+		</script>
+		<script type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js">
+		</script>		
+		<script type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js">
+		</script>
+		<!-- loads the entire todos app!
+		<script 
+			type="text/javascript"
+			src="../../Todos/v0.1.6/client/js/todos.js">
+		</script>
+		<script 
+			type="text/javascript"
+			src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.8/angular.js">
+		</script>
+		-->
+		<script 
+			type="text/javascript"
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.0/angular.js">
+		</script>
+		<script 
+			type="text/javascript"
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.0/angular-route.js">
+		</script>
+		<script 
+			type="text/javascript"
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.0/angular-resource.js">
+		</script>
+		<script 
+			type="text/javascript"
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.0/angular-sanitize.js">
+		</script>
+		<script 
+			type="text/javascript"
+			src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0-beta.0/angular-cookies.js">
+		</script>
+		<script type="text/javascript"
+			src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js">
+		</script>
+		<script 
+			type="text/javascript"
+			src="angular-contenteditable.js">
+		</script>
+		<script type="text/ng-template" id="signin.css">
+			<style>				
+				body {
+				  padding-top: 40px;
+				  padding-bottom: 40px;
+				  background-color: #eee;
+				}
+
+				.form-signin {
+				  max-width: 330px;
+				  padding: 15px;
+				  margin: 0 auto;
+				}
+				.form-signin .form-signin-heading,
+				.form-signin .checkbox {
+				  margin-bottom: 10px;
+				}
+				.form-signin .checkbox {
+				  font-weight: normal;
+				}
+				.form-signin .form-control {
+				  position: relative;
+				  height: auto;
+				  -webkit-box-sizing: border-box;
+				     -moz-box-sizing: border-box;
+				          box-sizing: border-box;
+				  padding: 10px;
+				  font-size: 16px;
+				}
+				.form-signin .form-control:focus {
+				  z-index: 2;
+				}
+				.form-signin input[type="email"] {
+				  margin-bottom: -1px;
+				  border-bottom-right-radius: 0;
+				  border-bottom-left-radius: 0;
+				}
+				.form-signin input[type="password"] {
+				  margin-bottom: 10px;
+				  border-top-left-radius: 0;
+				  border-top-right-radius: 0;
+				}
+			</style>		
+		</script>
+		<script type="text/ng-template" id="signin.html">
+			<div ng-include src="'signin.css'"></div>
+			<div>
+				<form name="signinform" novalidate class="form-signin">
+					<h2 class="form-signin-heading">Please Sign In</h2>
+					<label for="inputEmail" class="sr-only">Email Address</label>
+					<input type="email" ng-model="vm.signinUser.email" class="form-control" placeholder="Email Address" required autofocus>
+					<label for="inputPassword" class="sr-only">Password</label>
+					<input type="password" ng-model="vm.signinUser.password" class="form-control" placeholder="Password" required>
+					<div class="checkbox cbRememberMe">
+						<label>
+							<input type="checkbox" ng-click="setRememberMe()" ng-checked="getRememberMe()"> Remember Me
+						</label>
+					</div>
+					<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="signin(signinform)">Sign In</button>
+				</form>
+			</div> <!-- /signin --> 
+		</script>
+		<script type="text/ng-template" id="signup.html">
+			<div ng-include src="'signin.css'"></div>
+			<div>
+				<form name="signupform" novalidate class="form-signin">
+					<h2 class="form-signin-heading">Please Sign Up</h2>
+					<label for="inputEmail" class="sr-only">Email Address</label>
+					<input type="email" ng-model="vm.signupUser.email" class="form-control" placeholder="Email Address" required autofocus>
+					<label for="inputPassword" class="sr-only">Password</label>
+					<input type="password" ng-model="vm.signupUser.password" class="form-control" placeholder="Password" required>
+					<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="signup(signupform)">Sign Up</button>
+				</form>
+			</div> <!-- /signup --> 
+		</script> <!-- /signup -->
+		<script type="text/ng-template" id="storyboard.html">
+ 			<div class="container">
+				<div ng-include src="'nav.html'"></div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h1 class="panel-title"><span class="glyphicon glyphicon-list"></span> Storyboard</h1>
+					</div>
+					<div class="panel-body">
+						Coming Soon!
+					</div>
+					<div ng-include src="'footer.html'"></div>
+				</div> <!-- /home -->
+			</div> <!-- /container -->
+		</script>
+		<script type="text/ng-template" id="features.html">
+ 			<div class="container">
+				<div ng-include src="'nav.html'"></div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h1 class="panel-title"><span class="glyphicon glyphicon-list"></span> Features</h1>
+					</div>
+					<div class="panel-body">
+						<div ng-repeat="group in vm.features" ng-if="$index < 21">
+							<p class="text-left">
+								{{ group.release }}
+							</p>
+							<ul>
+								<li ng-repeat="item in group.features">
+									<div class="row" ng-class-even="'even'" ng-class-odd="'odd'">
+										<div class="col-md-1">										
+											<span class="glyphicon glyphicon-pencil"></span>
+										</div>
+										<div class="col-md-11">
+											<span class="-col-format">
+													<p 
+														class="text-left">
+															{{ item.feature }}
+													</p>
+											</span>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div ng-include src="'footer.html'"></div>
+				</div> <!-- /home -->
+			</div> <!-- /container -->
+		</script>
+		<script type="text/ng-template" id="techstack.html">
+ 			<div class="container">
+				<div ng-include src="'nav.html'"></div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h1 class="panel-title"><span class="glyphicon glyphicon-list"></span> TechStack</h1>
+					</div>
+					<div class="panel-body">
+						<ul>
+							<li ng-repeat="item in vm.techstack" ng-if="$index < 21">
+								<div class="row" ng-class-even="'even'" ng-class-odd="'odd'">
+									<div class="col-md-4">
+										<span class="-col-format">
+												<p 
+													class="text-left">
+														{{ item.text }}
+												</p>
+										</span>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div ng-include src="'footer.html'"></div>
+				</div> <!-- /home -->
+			</div> <!-- /container -->
+		</script>
+		<script type="text/ng-template" id="contact.html">
+ 			<div class="container">
+				<div ng-include src="'nav.html'"></div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h1 class="panel-title"><span class="glyphicon glyphicon-list"></span> Contact</h1>
+					</div>
+					<div class="panel-body">
+						<div class="contacts">
+							<ul>
+								<li>Email: Puneet AT Inventica DOT com
+
+								<li><a href="https://github.com/lamba">GitHub</a>
+
+								<li><a href="http://www.linkedin.com/in/lamba/">LinkedIn</a>
+
+								<li><a href="https://twitter.com/PuneetLamba">Twitter</a>
+							</ul>
+						</div>
+					</div>
+					<div ng-include src="'footer.html'"></div>
+				</div> <!-- /home -->
+			</div> <!-- /container -->
+		</script>
+		<script type="text/ng-template" id="nav.html">
+			<div ng-controller="NavController">
+				<div class="welcome" ng-hide="isLoggedInUser()">
+				  	Welcome, <label class="loggedInUser"></label>! <a href="#home" ng-click="logout(vm.loggedInUser)">Sign Out</a>
+				</div>
+				<div class="signinOrRegister" ng-show="isLoggedInUser()">
+				  	<a href="#signin">Sign In</a> or <a href="#signup">Sign Up</a>
+				</div>
+				<ul class="nav nav-pills nav-justified">
+					<li role="presentation" ng-class="{active:isActive('/home')}">
+						<a href="#home">Home</a>
+					</li>
+					<li role="presentation" ng-class="{active:isActive('/storyboard')}">
+						<a href="#storyboard">Storyboard</a>
+					</li>
+					<li role="presentation" ng-class="{active:isActive('/features')}">
+						<a href="#features">Features</a>
+					</li>
+					<li role="presentation" ng-class="{active:isActive('/techstack')}">
+						<a href="#techstack">TechStack</a>
+					</li>
+					<li role="presentation" ng-class="{active:isActive('/contact')}">
+						<a href="#contact">Contact</a>
+					</li>
+				</ul>
+			</div>
+		</script>
+		<script type="text/ng-template" id="footer.html">
+			<div class="panel-footer">
+				&copy; <a href="http://inventica.com">Inventica.com</a>, 2014.
+			</div>
+		</script>
+		<script type="text/ng-template" id="home.html">
+ 			<div class="container home">
+				<div ng-include src="'nav.html'"></div>
+				<form ng-submit="addTodo()">
+					<div class="input-group add-todo">
+						<input type="text" maxlength="40" ng-model=vm.newTodo class="form-control" placeholder="Add A ToDo"/>
+						<span class="input-group-btn">
+							<button class="btn btn-default" ng-click="addTodo()" type="button">Add</button>
+						</span>				
+					</div>				
+				</div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h1 class="panel-title"><span class="glyphicon glyphicon-list"></span> ToDos</h1>
+					</div>
+					<div class="panel-body">
+						<ul>
+							<li ng-repeat="todo in vm.todos" ng-if="$index < 25">
+								<div class="row" ng-class-even="'even'" ng-class-odd="'odd'">
+									<div class="col-md-1">
+	        							<input 
+	        								type="checkbox" 
+	        								ng-checked="todo.completed_date != null"
+	        								ng-click="completeTodo(todo)"
+	        								ng-model="todo.completed"/>
+									</div>
+									<div class="col-md-6" ng-class="(todo.completed_date != null) ? 'completed' : ''">
+										<p 
+											class="text-left" 
+											contenteditable="true"
+											ng-model="todo.description"
+											ng-keydown="keydown($event, todo)">
+												<!--
+												this templating seems unnecessary as long as ng-model is specified and 
+												no filtering/piping is required
+												using this templating causes the cursor to lose its position after first keystroke
+												{{ todo.description }}
+												-->
+												<!--
+												limit contenteditable maxlength=40; completed in javascript code
+												-->
+										</p>
+									</div>
+									<div class="col-md-4">
+										<span class="-col-format">
+												<p class="text-left">
+													{{ todo.created_date | formatDateFilter }}
+												</p>
+										</span>
+									</div>
+									<div class="col-md-1">
+										<span class="-col-format">
+											<button 
+												type="button" 
+												class="close" 
+												title="To Remove Todo, First Mark It Complete"
+												ng-disabled="!todo.completed"
+												ng-click="removeTodo(todo)">&times;
+											</button>
+										</span>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div ng-include src="'footer.html'"></div>
+				</div> <!-- /home -->
+			</div> <!-- /container -->
+		</script>
+		<script>
+			(function(){
+				'use strict';
+				var serverUrlPrefix = 'http://localhost';
+				//var serverUrlPrefix = 'https://lamba-todos.herokuapp.com';
+				var
+					maxTodoLength = 40;
+					//loggedInUser = null;
+
+				//setter
+				angular
+					.module('angTodos', ['ngRoute', 'ngResource', 'ngSanitize', 'ngCookies', 'contenteditable'])
+					
+					//use uppercase to indicate constructor
+					//Controller As syntax
+					//adding a second controller gets rid of the unknown provider $routeProvider error!
+					.controller('HomeControllerAs', HomeControllerAs)
+					.controller('SigninControllerAs', ['$cookieStore', '$scope', '$location', 'User', 'LoggedInUser', '$http', SigninControllerAs])
+					.controller('SignupControllerAs', SignupControllerAs)
+					.controller('StoryboardControllerAs', StoryboardControllerAs)
+					.controller('FeaturesControllerAs', FeaturesControllerAs)
+					.controller('TechstackControllerAs', TechstackControllerAs)
+					.controller('ContactControllerAs', ContactControllerAs)
+					.controller('NavController', NavController)
+					.controller('AddTodoController', AddTodoController)
+					.config(config)
+					//.run(run)
+					//service doesn't seem to work and documentation recommends using factory instead
+					//but defining as a factory achives nothing more than a singleton implementation (internally via angular)
+					.factory('Todo', Todo)
+					.factory('User', User)
+					.factory('LoggedInUser', LoggedInUser)
+					//.directive('contenteditable', ['$sce', '$http', '$httpBackend', 'Todo', contenteditable])
+					.filter('formatDateFilter', formatDateFilter);
+
+				function run($rootScope) {
+					// angular.element(".nav li").on("click", function($event) {
+					// 	$(".nav li").removeClass("active");
+					// 	$(angular.element($event.srcElement)).addClass("active");
+					// });						
+					// $rootScope.navClick = function($event) {
+					// 	console.log('navClick');
+					// 	angular.element(".nav li").removeClass("active");
+					// 	angular.element($event.srcElement).addClass("active");
+					// };
+				};
+
+				function formatDateFilter($filter) {
+					return function(date) {
+						console.log('formatDateFilter');
+						//this is a bit misleading, because it is actually using angular's built in filter called 'date'
+						//since javascript has no built in facility for doing this sort of thing
+						return $filter('date')(new Date(date), 'MM/dd/yy hh:mm:ss a Z');
+					};
+				};
+
+				function LoggedInUser(User) {
+					var loggedInUser = new User();
+					loggedInUser.Email = '';
+					loggedInUser.RememberMe = false;
+					return {
+						setEmail: function(email) {
+							loggedInUser.Email = email;
+						},
+						getEmail: function() {
+							return loggedInUser.Email;
+						},
+						setRememberMe: function(rememberMe) {
+							loggedInUser.RememberMe = rememberMe;
+						},
+						getRememberMe: function() {
+							return loggedInUser.RememberMe;
+						}
+					};
+				};
+
+				function User($resource) {
+					console.log('User resource');
+					//return $resource('http://localhost/api/todos/:id');
+					return $resource(
+						serverUrlPrefix + '/api/user/:id',
+						{
+							email: '@email',
+							password: '@password'
+						},
+						{
+							'query': {
+								method: 'GET', 
+								isArray: true
+							},
+							'delete': {
+								method: 'DELETE'
+							},
+							'login': {
+								method: 'PUT',
+								isArray: false
+							},
+							'register': {
+								method: 'POST' 
+							}							
+						}
+					);
+				};
+
+				function AddTodoController() {
+
+				};
+
+				function SigninControllerAs($cookieStore, $scope, $location, User, LoggedInUser, $http) {
+					//console.log('SigninControllerAs');
+					var 
+						vm = this;
+
+					vm.users = User.query(function(){
+						//console.log('User.query() complete');
+					});
+				 	//angular.element('.cbRememberMe').checked(LoggedInUser.getRememberMe());
+				 	vm.signinUser = {};
+				 	//angular doesn't support setting an expiry date, so using jquery plugin
+				 	//console.log("$cookieStore.get('email')="+$cookieStore.get('email'));
+				 	console.log("jQuery.cookie('email')="+jQuery.cookie('email'));
+				 	console.log('LoggedInUser.getEmail='+LoggedInUser.getEmail());
+			 		vm.signinUser.email = jQuery.cookie('email');
+				 	$scope.getEmail = function() {
+				 	};
+					$scope.getRememberMe = function() {
+					 	console.log('LoggedInUser.RememberMe='+LoggedInUser.getRememberMe());
+						return LoggedInUser.getRememberMe();
+					};				 	
+					$scope.setRememberMe = function() {
+						LoggedInUser.setRememberMe(!LoggedInUser.getRememberMe());
+						//$cookieStore.put('email', LoggedInUser.getEmail());
+						//REMEMBER: COOKIES *ONLY* WORK UNLESS YOU'RE RUNNING ON A WEB SERVER!
+					 	jQuery.cookie('email', LoggedInUser.getEmail(), {expires:365, httpOnly:false});
+					 	console.log('LoggedInUser.getRememberMe='+LoggedInUser.getRememberMe());
+					 	console.log("jQuery.cookie('email')="+jQuery.cookie('email'));
+					};
+					$scope.signin = function(form){
+						//console.log('signin');						
+						console.log('vm.signinUser='+JSON.stringify(vm.signinUser));
+						if (!form.$valid) {
+							toastr.error("Please provide email and password!");
+							return false;							
+						};
+						User.login(
+							vm.signinUser, //action/request parameters
+							vm.signinUser, //post data
+							function(success_data){ //success callback
+								//on server-side send object, not string; $resource will convert raw string to array of char
+								//e.g. "Hello" becomes {'0':'H','1':'e','2':'l','3':'l','4':'o'}
+								var response = JSON.stringify(success_data);
+								console.log('success_data='+response);
+								if (response.toLowerCase().indexOf("error") > -1) {
+									toastr.warning(success_data.error);
+								} else {
+									LoggedInUser.setEmail(vm.signinUser.email);
+									$location.path('#home');
+								};
+							},
+							function(error){ //error callback
+								//only fatal errors get here; handle softer errors under success (above)
+								var response = JSON.stringify(error);
+								console.log('fatal error:'+response);
+								LoggedInUser.Email = '';
+								toastr.error(response);
+							});
+					};
+				};
+
+				function SignupControllerAs($scope, User, $location) {
+					//console.log('SignupControllerAs');
+					var vm = this;
+					vm.signupUser = {};
+					$scope.users = User.query(
+						{}, //query/action parameters
+						function(success_data){ //success callback
+							console.log('success_data='+JSON.stringify(success_data));
+							//console.log('User.query() complete');
+						},
+						function(error){ //error callback
+							console.log('error:'+JSON.stringify(error));
+						});
+					$scope.signup = function(form){
+						//console.log('signup');
+						console.log('vm.signupUser='+JSON.stringify(vm.signupUser));
+						//console.log('signin email: ' + email + ' password: ' + password);
+						if (!form.$valid) {
+							toastr.error("Please provide email and password!");
+							return false;							
+						}
+						User.register(
+							vm.signupUser, //action/request parameters
+							vm.signupUser, //post data
+							function(success_data){ //success callback
+								console.log('success_data='+JSON.stringify(success_data));
+								//$scope.loggedInUser = new User();
+								//angular.element('.signinOrRegister').hide();
+								toastr.success("Signup Completed.")
+								$location.path('#signin');
+								//$window.location = "#home";
+							},
+							function(error){ //error callback
+								console.log('error:'+JSON.stringify(error));
+								toastr.error("Signup Error:"+JSON.stringify(error));
+							}
+						);
+					};
+				};
+
+				function StoryboardControllerAs($scope) {
+					//console.log('StoryboardControllerAs');
+					// angular.element(".nav li").on("click", function() {
+					// 	$(".nav li").removeClass("active");
+					// 	$(this).addClass("active");
+					// });
+					$scope.storyboard = function(){
+						//console.log('storyboard');
+					};
+				};
+
+				function FeaturesControllerAs($scope) {
+					//console.log('FeaturesControllerAs');
+					var vm = this;
+					//vm.features = [{feature:'feature1'},{feature:'feature2'}];
+					vm.features = [
+						{
+							'release':'v0.2.0',
+							'features':
+								[
+									{'feature':'Rewrite of client-side using AngularJS and Bootstrap'},
+									{'feature':'Allow inline/inplace editing of todos'},
+									{'feature':'Use of CORS to decouple client and server'}
+								]
+						},
+						{
+							'release':'v0.1.6',
+							'features':
+								[
+									{'feature':'Made storyboard stickies draggable on iOS'},
+									{'feature':'Basic responsive design and explored use of history API'}
+								]
+						},
+						{
+							'release':'v0.1.5',
+							'features':
+								[
+									{'feature':'Display storyboard version of todos'},
+									{'feature':'Display active/selected footer button'}
+								]
+						},
+						{
+							'release':'v0.1.4',
+							'features':
+								[
+									{'feature':'Footer w/ Home, Features, & Contact buttons'},
+									{'feature':'Limit todos to 20'}
+								]
+						},
+						{
+							'release':'v0.1.3',
+							'features':
+								[
+									{'feature':'Added README.md'},
+									{'feature':'Ability to delete completed todo'},
+									{'feature':'Password encryption'}
+								]
+						},
+						{
+							'release':'v0.1.2',
+							'features':
+								[
+									{'feature':'Persistence via MongoDB'},
+									{'feature':'Security (authentication and authorization)'}
+								]
+						},
+						{
+							'release':'v0.1.1',
+							'features':
+								[
+									{'feature':'Cross-browser compatibility fixes'}
+								]
+						},
+						{
+							'release':'v0.1.0',
+							'features':
+								[
+									{'feature':'Initial release'}
+								]
+						},
+						{
+							'release':'Backlog',
+							'features':
+								[
+									{'feature':'Allow undo on mark completed'},
+									{'feature':'Create API for full db extract to JSON'},
+									{'feature':'Send email to validate signup/registration'},
+									{'feature':'Lock down CORS implementation to specific domain'},
+									{'feature':'Implement admin user role'},
+									{'feature':'Show in progress animation when loading'},
+									{'feature':'Add drag and drop ability to reorder todos'}
+								]
+						}
+					];
+					$scope.features = function(){
+						//console.log('features');
+					};
+				};
+
+				function TechstackControllerAs($scope) {
+					//console.log('TechstackControllerAs');
+					var vm = this;
+					vm.techstack = [
+						{text:'HTML'},
+						{text:'CSS'},
+						{text:'JavaScript'},
+						{text:'jQuery'},
+						{text:'jQuery Cookies'},
+						{text:'AJAX'},
+						{text:'JSON'},
+						{text:'jQueryUI'},
+						{text:'Touch Punch'},
+						{text:'jQuery Sticky Notes'},
+						{text:'Toastr'},
+						{text:'NodeJS'},
+						{text:'BCrypt'},
+						{text:'Mongoose'},
+						{text:'MongoDB'},
+						{text:'Heroku PaaS with SSL'},
+						{text:'AngularJS'},
+						{text:'Bootstrap'}
+					];
+					$scope.techstack = function(){
+						//console.log('techstack');
+					};
+				};
+
+				function ContactControllerAs($scope) {
+					//console.log('ContactControllerAs');
+					var vm = this;
+					vm.contacts = [
+						{contact:'Puneet AT Inventica DOT com'},
+						{contact:'<a href="">Link</a>'}
+					];
+					$scope.contact = function(){
+						//console.log('contact');
+					};
+				};
+
+				function NavController($scope, $location, LoggedInUser) {
+					//console.log('NavController');
+					console.log('LoggedInUser.getEmail()='+LoggedInUser.getEmail());
+					angular.element('.loggedInUser').text(LoggedInUser.getEmail());
+					$scope.isActive = function(viewLocation){
+						//console.log('isActive');
+						return viewLocation === $location.path();
+					};
+					//ng-show, ng-hide behavior seems reversed
+					//ng-show will show when this function returns false
+					//ng-hide will hide when this function returns false
+					$scope.isLoggedInUser = function() {
+						//console.log('isLoggedInUser()='+ (LoggedInUser.getEmail() !== ''));
+						return (LoggedInUser.getEmail() === '');
+					};
+					$scope.logout = function() {
+						console.log('logout');
+						LoggedInUser.setEmail('');
+						console.log('LoggedInUser.getEmail()='+LoggedInUser.getEmail());
+						$location.path('#home');
+					};
+				};
+
+				function Todo($resource) {
+					console.log('Todo resource');
+					return $resource(
+						serverUrlPrefix + '/api/todo/:id',
+						{
+							email: '@email',
+							_id: '@_id',
+							description: '@description'
+						},
+						{
+							'update': {
+								method: 'PUT',
+								isArray: false
+							},
+							'query': {
+								method: 'GET', 
+								isArray: true
+							},
+							'delete': {
+								method: 'DELETE'
+							},
+							'create': {
+								method: 'POST' 
+							}							
+						}
+					);
+				};
+					
+				function HomeControllerAs($scope, Todo, LoggedInUser) {
+					console.log('HomeControllerAs');
+					//console.log('vm.loggedInUser='+JSON.stringify(vm.loggedInUser));
+					toastr.success("Welcome!");
+					var vm = this;
+					//params supplied here override those supplied in the resource definition inside the service
+					vm.todos = Todo.query({email:LoggedInUser.getEmail()}, function(){ 
+						console.log("Todo.query() complete");
+						console.log("vm.todos="+JSON.stringify(vm.todos));
+						vm.todos.forEach(function(todo){
+							console.log('todo.description='+todo.description+",todo.completed_date="+todo.completed_date);
+							if (todo.completed_date === null || typeof todo.completed_date === "undefined") {
+								todo.completed = false;
+							} else {
+								todo.completed = true;
+							};
+						});
+					});
+					//angular.element('.completed').checked('true');
+
+					$scope.addTodo = function() {
+						console.log('addTodo with description:'+vm.newTodo);
+						//var todo = new Todo();
+						//using remove because behavior for non-standard methods is funky
+						//TODO: map node methods to standard angular actions
+
+						Todo.create(
+							{
+								email:LoggedInUser.getEmail() === '' ? 'Anonymous' : LoggedInUser.getEmail(),
+								description:vm.newTodo
+							}, 
+							{
+								email:LoggedInUser.getEmail() === '' ? 'Anonymous' : LoggedInUser.getEmail(),
+								description:vm.newTodo
+							}, 
+							function(success){
+								console.log('addTodo complete');
+								$scope.vm.todos.push(success);
+								toastr.success("ToDo Created");
+								vm.newTodo = '';
+							},
+							function(error){
+								console.log('addTodo failed');
+								toastr.error('ToDo Creation Failed');
+							}
+						);
+					};
+
+					$scope.removeTodo = function(todo) {
+						console.log('removeTodo with id: '+todo._id);
+						if (todo.completed) {
+							Todo.delete(
+								{
+									_id:todo._id
+								}, 
+								{
+									_id:todo._id
+								}, 
+								function(success) {
+									console.log('removeTodo complete');
+									//$scope.vm.todos.pop(todo);
+									$scope.vm.todos.splice($scope.vm.todos.indexOf(todo),1);
+									//$scope.vm.todos.splice($index,1);
+									//todo = null;
+									toastr.success('Todo Removed');
+								},
+								function(error) {
+									console.log('removeTodo failed');								
+									toastr.error('Todo Remove Failed');
+								});
+							//THIS APPROACH WAS NOT UPDATING THE VIEW
+							// todo.$delete(
+							// 	{
+							// 		_id:todo._id
+							// 	}, 
+							// 	{
+							// 		_id:todo._id
+							// 	}, 
+							// 	function(success) {
+							// 		console.log('removeTodo complete');
+							// 		//$scope.vm.todos.pop(todo);
+							// 		//$scope.vm.todos.splice($scope.vm.todos.indexOf(todo),1);
+							// 		$scope.vm.todos.splice($index,1);
+							// 		todo = null;
+							// 		toastr.success('Todo Removed');
+							// 	},
+							// 	function(error) {
+							// 		console.log('removeTodo failed');								
+							// 		toastr.error('Todo Remove Failed');
+							// 	});
+						} else {
+							toastr.warning("Mark Todo Completed Before Removing!")
+						};
+					};
+
+					$scope.completeTodo = function(todo) {
+						console.log('completeTodo with id: '+todo._id);
+						console.log('todo.completed='+todo.completed);
+						// todo.$delete({_id:todo._id}, function(){
+						// 	console.log('completeTodo complete');
+						// });
+						Todo.update(
+							{
+								_id:todo._id,
+								description:todo.description.trim(),
+								completed_date:todo.completed ? new Date() : null
+							}, 
+							{
+								_id:todo._id,
+								description:todo.description.trim(),
+								completed_date:todo.completed ? new Date() : null
+							}, 
+							function(success){
+								console.log('Todo complete set to='+todo.completed);
+								//$scope.vm.todos.push(success);
+								if (todo.completed) {
+									toastr.success('Todo Marked Complete');
+								} else {
+									toastr.warning('Todo Marked Incomplete');
+								};
+								todo.completed_date = success.completed_date;
+							},
+							function(error){
+								console.log('Todo complete update failed');
+								toastr.error('Failed To Mark ToDo Completed!');
+							}
+						);
+					};
+
+					$scope.keydown = function($event, todo){
+						console.log('keydown');
+						console.log('todo.completed='+todo.completed);
+						if (todo.completed) {
+							if ($event.keyCode === 27) {
+								$event.target.blur();
+								toastr.warning("Uncheck The Completed Checkbox To Edit");
+							} else {
+								event.preventDefault();
+								return false; //prevent linefeed							
+								toastr.warning("Uncheck The Completed Checkbox To Edit");
+							};
+						};
+						//if enter or esc						
+						if ((angular.element($event.target).text().length >= maxTodoLength) && 
+							($event.keyCode !== 8) &&
+							($event.keyCode !== 13) &&
+							($event.keyCode !== 27)) {
+							event.preventDefault();
+							return false; //prevent linefeed							
+						};
+						if ($event.keyCode === 13 /*enter*/ || $event.keyCode === 27 /*esc*/) {
+							console.log('enter/esc');
+							$event.target.blur();
+							if ($event.keyCode === 13) {
+								console.log('enter');
+								console.log('todo.description changed to:'+todo.description);
+								todo.description = todo.description.trim();
+								console.log('todo.completed='+todo.completed);
+								// todo.$save(/*{_id:todo._id},*/ function(){
+								// 	console.log('todo updated');
+								// 	toastr.success("Edit Saved.");
+								// });								
+								Todo.update(
+									{
+										_id:todo._id,
+										description:todo.description.trim(),
+										completed_date:todo.completed ? new Date() : null
+									}, 
+									{
+										_id:todo._id,
+										description:todo.description.trim(),
+										completed_date:todo.completed ? new Date() : null
+									}, 
+									function(success){
+										console.log('Todo update complete');
+										//$scope.vm.todos.push(success);
+										toastr.success("ToDo Updated");
+									},
+									function(error){
+										console.log('Todo update failed');
+										toastr.error('ToDo Update Failed');
+									}
+								);
+							};
+							if ($event.keyCode === 27) {
+								console.log('esc');
+								toastr.warning("Edit NOT Saved!");
+							};
+							event.preventDefault();
+							return false; //prevent linefeed
+						};
+					};
+				};		
+
+				function config($routeProvider, $resourceProvider) {
+					//$httpProvider.defaults.useXDomain = true;
+					$resourceProvider.defaults.stripTrailingSlashes = false;
+					$routeProvider
+						.when('/home', {
+							templateUrl: 'home.html',
+							controller: 'HomeControllerAs',
+							controllerAs: 'vm'//,
+						})
+						.when('/signin', {
+							templateUrl: 'signin.html',
+							controller: 'SigninControllerAs',
+							controllerAs: 'vm'//,
+						})
+						.when('/signup', {
+							templateUrl: 'signup.html',
+							controller: 'SignupControllerAs',
+							controllerAs: 'vm'//,
+						})
+						.when('/storyboard', {
+							templateUrl: 'storyboard.html',
+							controller: 'StoryboardControllerAs',
+							controllerAs: 'vm'//,
+						})
+						.when('/features', {
+							templateUrl: 'features.html',
+							controller: 'FeaturesControllerAs',
+							controllerAs: 'vm'//,
+						})
+						.when('/techstack', {
+							templateUrl: 'techstack.html',
+							controller: 'TechstackControllerAs',
+							controllerAs: 'vm'//,
+						})
+						.when('/contact', {
+							templateUrl: 'contact.html',
+							controller: 'ContactControllerAs',
+							controllerAs: 'vm'//,
+						})
+						.otherwise({
+							redirectTo: '/home'
+						});				
+  				};
+			})();
+		</script>
+		<!-- router doesn't work without this empty tag -->
+		<div ng-view></div>
+	</body>
+</html>
