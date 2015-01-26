@@ -350,8 +350,10 @@
 												type="button" 
 												class="close" 
 												title="To Remove Todo, First Mark It Complete"
-												ng-disabled="!todo.completed"
 												ng-click="removeTodo(todo)">&times;
+												<!--
+												ng-disabled="!todo.completed"
+												-->
 											</button>
 										</span>
 									</div>
@@ -858,7 +860,8 @@
 								function(error) {
 									console.log('removeTodo failed');								
 									toastr.error('Todo Remove Failed');
-								});
+								}
+							);
 							//THIS APPROACH WAS NOT UPDATING THE VIEW
 							// todo.$delete(
 							// 	{
@@ -880,7 +883,7 @@
 							// 		toastr.error('Todo Remove Failed');
 							// 	});
 						} else {
-							toastr.warning("Mark Todo Completed Before Removing!")
+							toastr.warning("To Remove Todo, First Mark It Complete!")
 						};
 					};
 
