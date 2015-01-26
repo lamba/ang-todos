@@ -4,6 +4,7 @@
 		<title>AngularJS Todos</title>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" type="text/css" media="screen">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" type="text/css" media="screen">
+		<link rel="shortcut icon" href="inventica.ico">
 		<style type="text/css">
 			body { margin:1em 20%; width:60%; }
 			.container, .menu, .httptodos { width:100%; }
@@ -137,7 +138,10 @@
 					<input type="password" ng-model="vm.signinUser.password" class="form-control" placeholder="Password" required>
 					<div class="checkbox cbRememberMe">
 						<label>
-							<input type="checkbox" ng-click="setRememberMe()" ng-checked="getRememberMe()"> Remember Me
+							<!--
+							<input type="checkbox" ng-click="setRememberMe(checked)" ng-checked="getRememberMe()"> Remember Me
+							-->
+							<input type="checkbox" ng-model="vm.signinUser.rememberMe" ng-click="cbClicked()"> Remember Me
 						</label>
 					</div>
 					<button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="signin(signinform)">Sign In</button>
@@ -369,13 +373,13 @@
 
 				//setter
 				angular
-					.module('angTodos', ['ngRoute', 'ngResource', 'ngSanitize', 'ngCookies', 'contenteditable'])
+					.module('angTodos', ['ngRoute', 'ngResource', 'ngSanitize', 'contenteditable'])
 					
 					//use uppercase to indicate constructor
 					//Controller As syntax
 					//adding a second controller gets rid of the unknown provider $routeProvider error!
 					.controller('HomeControllerAs', HomeControllerAs)
-					.controller('SigninControllerAs', ['$cookieStore', '$scope', '$location', 'User', 'LoggedInUser', '$http', SigninControllerAs])
+					.controller('SigninControllerAs', ['$scope', '$location', 'User', 'LoggedInUser', '$http', SigninControllerAs])
 					.controller('SignupControllerAs', SignupControllerAs)
 					.controller('StoryboardControllerAs', StoryboardControllerAs)
 					.controller('FeaturesControllerAs', FeaturesControllerAs)
@@ -429,6 +433,13 @@
 							loggedInUser.RememberMe = rememberMe;
 						},
 						getRememberMe: function() {
+							// if (loggedInUser.Email.length > 0) { // logged in user
+							// 	console.log('loggedInUser.Email.length > 0');
+							// 	return loggedInUser.RememberMe;
+							// } else {
+							// 	console.log('jQuery.cookie("email").length > 0 =>'+(jQuery.cookie('email').length > 0));
+							// 	return (jQuery.cookie('email').length > 0);
+							// };
 							return loggedInUser.RememberMe;
 						}
 					};
@@ -466,35 +477,41 @@
 
 				};
 
-				function SigninControllerAs($cookieStore, $scope, $location, User, LoggedInUser, $http) {
+				function SigninControllerAs($scope, $location, User, LoggedInUser, $http) {
 					//console.log('SigninControllerAs');
 					var 
 						vm = this;
 
-					vm.users = User.query(function(){
-						//console.log('User.query() complete');
-					});
+					// vm.users = User.query(function(){
+					// 	//console.log('User.query() complete');
+					// });
 				 	//angular.element('.cbRememberMe').checked(LoggedInUser.getRememberMe());
 				 	vm.signinUser = {};
 				 	//angular doesn't support setting an expiry date, so using jquery plugin
 				 	//console.log("$cookieStore.get('email')="+$cookieStore.get('email'));
 				 	console.log("jQuery.cookie('email')="+jQuery.cookie('email'));
 				 	console.log('LoggedInUser.getEmail='+LoggedInUser.getEmail());
-			 		vm.signinUser.email = jQuery.cookie('email');
-				 	$scope.getEmail = function() {
-				 	};
-					$scope.getRememberMe = function() {
-					 	console.log('LoggedInUser.RememberMe='+LoggedInUser.getRememberMe());
-						return LoggedInUser.getRememberMe();
+			 		vm.signinUser.email = jQuery.cookie('email') ? jQuery.cookie('email') : '';
+			 		if (vm.signinUser.email.length > 0) {
+			 			vm.signinUser.rememberMe = true;
+			 		} else {
+			 			vm.signinUser.rememberMe = false;			 			
+			 		};
+				 	console.log('vm.signinUser.rememberMe='+vm.signinUser.rememberMe);
+					$scope.cbClicked = function() {
+					 	console.log('vm.signinUser.rememberMe='+vm.signinUser.rememberMe);
 					};				 	
-					$scope.setRememberMe = function() {
-						LoggedInUser.setRememberMe(!LoggedInUser.getRememberMe());
-						//$cookieStore.put('email', LoggedInUser.getEmail());
-						//REMEMBER: COOKIES *ONLY* WORK UNLESS YOU'RE RUNNING ON A WEB SERVER!
-					 	jQuery.cookie('email', LoggedInUser.getEmail(), {expires:365, httpOnly:false});
-					 	console.log('LoggedInUser.getRememberMe='+LoggedInUser.getRememberMe());
-					 	console.log("jQuery.cookie('email')="+jQuery.cookie('email'));
-					};
+					// $scope.getRememberMe = function() {
+					//  	console.log('SigninControllerAs LoggedInUser.getRememberMe='+LoggedInUser.getRememberMe());
+					// 	return LoggedInUser.getRememberMe();
+					// };				 	
+					// $scope.setRememberMe = function(checked) {
+					// 	//LoggedInUser.setRememberMe(!LoggedInUser.getRememberMe());
+					// 	console.log('checked='+angular.element('.cbRememberMe').checked);
+					// 	LoggedInUser.setRememberMe(checked);
+					// 	//$cookieStore.put('email', LoggedInUser.getEmail());
+					//  	console.log('LoggedInUser.getRememberMe='+LoggedInUser.getRememberMe());
+					// };
 					$scope.signin = function(form){
 						//console.log('signin');						
 						console.log('vm.signinUser='+JSON.stringify(vm.signinUser));
@@ -514,7 +531,16 @@
 									toastr.warning(success_data.error);
 								} else {
 									LoggedInUser.setEmail(vm.signinUser.email);
-								 	jQuery.cookie('email', LoggedInUser.getEmail(), {expires:365, httpOnly:false});
+									LoggedInUser.setRememberMe(vm.signinUser.rememberMe);
+									//REMEMBER: COOKIES *ONLY* WORK UNLESS YOU'RE RUNNING ON A WEB SERVER!
+									if (LoggedInUser.getRememberMe()) {
+									 	jQuery.cookie('email', LoggedInUser.getEmail(), {expires:365, httpOnly:false});
+									 	toastr.success("Cookie Created");
+									} else {
+										jQuery.removeCookie('email');			
+									 	toastr.warning("Cookie Deleted");
+									};
+								 	console.log("jQuery.cookie('email')="+jQuery.cookie('email'));
 									$location.path('#home');
 								};
 							},
@@ -778,10 +804,6 @@
 					});
 					//angular.element('.completed').checked('true');
 					
-					if (LoggedInUser.getRememberMe()) {
-						//set cookie here or after signin?
-					};
-
 					$scope.addTodo = function() {
 						console.log('addTodo with description:'+vm.newTodo);
 						//var todo = new Todo();
