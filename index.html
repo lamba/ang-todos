@@ -825,7 +825,7 @@
 							function(success){
 								console.log('addTodo complete');
 								$scope.vm.todos.push(success);
-								if (LoggedInUser.getEmail.length > 0) {
+								if (LoggedInUser.getEmail().length > 0) {
 									toastr.success("ToDo Created");
 								} else {
 									toastr.warning("To Save Your Todos, Sign In or Sign Up`");
