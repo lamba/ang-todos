@@ -184,7 +184,7 @@
 						<h1 class="panel-title"><span class="glyphicon glyphicon-list"></span> Features</h1>
 					</div>
 					<div class="panel-body">
-						<div ng-repeat="group in vm.features" ng-if="$index < 21">
+						<div ng-repeat="group in vm.features" ng-if="$index < 100">
 							<p class="text-left">
 								{{ group.release }}
 							</p>
@@ -220,7 +220,7 @@
 					</div>
 					<div class="panel-body">
 						<ul>
-							<li ng-repeat="item in vm.techstack" ng-if="$index < 21">
+							<li ng-repeat="item in vm.techstack" ng-if="$index < 100">
 								<div class="row" ng-class-even="'even'" ng-class-odd="'odd'">
 									<div class="col-md-4">
 										<span class="-col-format">
@@ -299,7 +299,11 @@
 				<div ng-include src="'nav.html'"></div>
 				<form ng-submit="addTodo()">
 					<div class="input-group add-todo">
-						<input type="text" maxlength="40" ng-model=vm.newTodo class="form-control" placeholder="Add A ToDo"/>
+						<input 
+							type="text" 
+							ng-model=vm.newTodo 
+							class="form-control new-todo-input" 
+							placeholder="Add A ToDo"/>
 						<span class="input-group-btn">
 							<button class="btn btn-default" ng-click="addTodo()" type="button">Add</button>
 						</span>				
@@ -311,7 +315,7 @@
 					</div>
 					<div class="panel-body">
 						<ul>
-							<li ng-repeat="todo in vm.todos" ng-if="$index < 25">
+							<li ng-repeat="todo in vm.todos" ng-if="$index < 100">
 								<div class="row" ng-class-even="'even'" ng-class-odd="'odd'">
 									<div class="col-md-1">
 	        							<input 
@@ -371,7 +375,7 @@
 				//var serverUrlPrefix = 'http://localhost';
 				var serverUrlPrefix = 'https://lamba-todos.herokuapp.com';
 				var
-					maxTodoLength = 40;
+					maxTodoLength = 60;
 					//loggedInUser = null;
 
 				//setter
@@ -682,10 +686,16 @@
 							'features':
 								[
 									{'feature':'Allow undo on mark completed'},
+									{'feature':'Limit number of todos (currently set to 100)'},
 									{'feature':'Create API for full db extract to JSON'},
 									{'feature':'Send email to validate signup/registration'},
+									{'feature':'Modify APIs to consistently send objects, not arrays'},
+									{'feature':'Redirect to signin after signup success'},
 									{'feature':'Lock down CORS implementation to specific domain'},
 									{'feature':'Implement admin user role'},
+									{'feature':'Show in progress animation when loading'},
+									{'feature':'Settings tab with color scheme picker'},
+									{'feature':'Allow upload of background image'},
 									{'feature':'Show in progress animation when loading'},
 									{'feature':'Add drag and drop ability to reorder todos'}
 								]
@@ -806,7 +816,14 @@
 						});
 					});
 					//angular.element('.completed').checked('true');
-					
+
+					// $scope.getMaxTodoLength = function() {
+					// 	console.log("getMaxTodoLength");
+					// 	return maxTodoLength;
+					// };
+
+					angular.element('.new-todo-input').attr('maxlength', maxTodoLength);
+
 					$scope.addTodo = function() {
 						console.log('addTodo with description:'+vm.newTodo);
 						//var todo = new Todo();
