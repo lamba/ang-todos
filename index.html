@@ -375,7 +375,8 @@
 				//var serverUrlPrefix = 'http://localhost';
 				var serverUrlPrefix = 'https://lamba-todos.herokuapp.com';
 				var
-					maxTodoLength = 60;
+					//60 characters fit easily, but only 56 numerals fit
+					maxTodoLength = 56;
 					//loggedInUser = null;
 
 				//setter
@@ -690,7 +691,6 @@
 									{'feature':'Create API for full db extract to JSON'},
 									{'feature':'Send email to validate signup/registration'},
 									{'feature':'Modify APIs to consistently send objects, not arrays'},
-									{'feature':'Redirect to signin after signup success'},
 									{'feature':'Lock down CORS implementation to specific domain'},
 									{'feature':'Implement admin user role'},
 									{'feature':'Show in progress animation when loading'},
@@ -698,6 +698,14 @@
 									{'feature':'Allow upload of background image'},
 									{'feature':'Show in progress animation when loading'},
 									{'feature':'Add drag and drop ability to reorder todos'}
+								]
+						},
+						{
+							'release':'Known Issues',
+							'features':
+								[
+									{'feature':"ContentEditable doesn't allow navigation using arrow keys"},
+									{'feature':'Redirect to signin after signup success not working'}
 								]
 						}
 					];
