@@ -1,11 +1,11 @@
 exports.config = {
   seleniumAddress: 'http://localhost:4444/wd/hub',
   specs: [
-    'todo-spec.js',
-    'ang-todos-spec.js'
+    'ang-todos-add-spec.js',
+    'ang-todos-complete-spec.js',
+    'ang-todos-remove-spec.js'
   ],
   seleniumArgs: {
-    'broswerName':'firefox',
     'broswerName':'chrome'
   },
   baseUrl: 'http://localhost:800'
