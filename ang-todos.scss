@@ -1,0 +1,26 @@
+$color-border: #777;
+$color-odd: #ccc;
+$color-even: #eee;
+$color-completed: #888;
+$font-stack: Helvetica, sans-serif;
+$font-size: 15px;
+
+body { margin:1em 20%; width:60%; font:100% $font-stack; font-size: $font-size; }
+.container, .menu, .httptodos { width:100%; }
+.nav { margin:.5em 0em; }
+li { list-style:none; }
+ul { list-style-type:none; padding-left:0; }
+.row { border:1px solid #777; border-radius:5px 5px 5px 5px; margin:.5% .5%; width:99%; }
+.add-todo { margin: 2% 0%; width:35em; }
+.input-group { width:100%; }
+[class*="col-"] { padding-top:.7em; } /* apply css to all col-md-1,2,... */
+.odd { background:#ccc; }
+.even { background:#eee; }
+.completed { text-decoration:line-through; color:#888 }
+.contacts li { list-style:square; padding-bottom:1em; }
+.icons { margin:auto; margin-top:30px; text-align:center; }
+.icon { opacity:.9; padding:0 40px 0 15px; height:64px; }
+.contacts ul { padding-left:1em; }
+.welcome-container { width:100%; display:inline-block; }
+.welcome, .signinOrRegister { float:left; clear:left; }
+.dev { float:left; margin-left:150px; color:red; }
