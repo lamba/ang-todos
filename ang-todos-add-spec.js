@@ -3,6 +3,8 @@
 //assertion counts are accurate only when 
 //  there's one assertion (expect) per test (it should...)
 //  all of the buildup/teardown code is in the beforeEach/afterEach calls
+//In case of the following error, restart processes/machines
+//Error: Timed out waiting for Protractor to synchronize with the page after 11 seconds.
 describe('ang-todos', function() {
 
   var 

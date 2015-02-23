@@ -6,29 +6,8 @@
 		<link rel="shortcut icon" href="img/inventica.ico">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" type="text/css" media="screen">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" type="text/css" media="screen">
-	    <link rel='stylesheet' href='https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css' type='text/css'>
-		<style type="text/css">
-			body { margin:1em 20%; width:60%; }
-			.container, .menu, .httptodos { width:100%; }
-			.nav { margin:.5em 0em; }
-			li { list-style:none; }
-			ul { list-style-type:none; padding-left:0; }
-			.row { border:1px solid #777; border-radius:5px 5px 5px 5px; margin:.5% .5%; width:99%; }
-			.add-todo { margin: 2% 0%; width:35em; }
-			.input-group { width:100%; }
-			[class*="col-"] { padding-top:.7em; } /* apply css to all col-md-1,2,... */
-			.odd { background:#ccc; }
-			.even { background:#eee; }
-			.completed { text-decoration:line-through; color:#888 }
-			.contacts li { list-style:square; padding-bottom:1em; }
-			.icons { margin:auto; margin-top:30px; text-align:center; }
-			.icon { opacity:.9; padding:0 40px 0 15px; height:64px; }
-			.contacts ul { padding-left:1em; }
-			/*input [type="text"]:checked { text-decoration:line-through; }*/
-			/*[contenteditable] { border: 1px solid black; background-color: white; min-height: 20px; }*/
-			/*[contenteditable]:focus { border-style: dashed; border-color: black; border-width: 3px; }*/
-			/*.ng-invalid { border: 1px solid red; }*/
-		</style>
+	    <link rel='stylesheet' href='https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css' type='text/css'>
+	    <link rel='stylesheet' href='ang-todos.css' type='text/css'>
 	</head>
 	<body>
 		<!--
@@ -305,6 +284,57 @@
 					        <a href='http://inventica.com/photos.html' title='Photos'>
 					          <i class='fa fa-camera-retro fa-3x icon'></i>
 					        </a>
+					        <a href='https://www.pinterest.com/puneetlamba/' title='Pinterest'>
+					          <i class='fa fa-pinterest fa-3x icon'></i>
+					        </a>
+					        <a href='http://instagram.com/plamba/' title='Instagram'>
+					          <i class='fa fa-instagram fa-3x icon'></i>
+					        </a>
+					        <a href='http://stackoverflow.com/users/682312/puneet-lamba' title='StackOverflow'>
+					          <i class='fa fa-stack-overflow fa-3x icon'></i>
+					        </a>
+					        <a href='https://www.facebook.com/puneet.lamba' title='Facebook'>
+					          <i class='fa fa-facebook fa-3x icon'></i>
+					        </a>
+					        <a href='https://www.tumblr.com/blog/plamba' title='Tumblr'>
+					          <i class='fa fa-tumblr fa-3x icon'></i>
+					        </a>					        
+					        <a href='https://www.flickr.com/photos/puneetlamba/' title='Flickr'>
+					          <i class='fa fa-flickr fa-3x icon'></i>
+					        </a>					        
+					        <a href='http://www.pandora.com/profile/pslamba' title='Pandora'>
+					          <i class='fa fa-music fa-3x icon'></i>
+					        </a>					        
+					        <a href='http://dzone.com/users/plamba' title='DZone'>
+					          <i class='fa fa-pencil-square-o fa-3x icon'></i>
+					        </a>					        
+					        <a href='http://www.iitr.ac.in/' title='University'>
+					          <i class='fa fa-university fa-3x icon'></i>
+					        </a>					        
+					        <a href='http://lamba.yelp.com' title='Yelp'>
+					          <i class='fa fa-yelp fa-3x icon'></i>
+					        </a>					        
+					        <a href='http://www.reddit.com/user/pslamba/' title='Reddit'>
+					          <i class='fa fa-reddit fa-3x icon'></i>
+					        </a>					        
+					        <a href='http://www.imdb.com/user/ur2972498/' title='IMDB'>
+					          <i class='fa fa-film fa-3x icon'></i>
+					        </a>					        
+					        <a href='http://www.computingreviews.com/browse/browse_reviewers.cfm?reviewer_id=122737' title='ACM Computing Reviews'>
+					          <i class='fa fa-bullhorn fa-3x icon'></i>
+					        </a>					        
+					        <a href='http://www.modernschoolvv.com/' title='High School'>
+					          <i class='fa fa-graduation-cap fa-3x icon'></i>
+					        </a>					        
+					        <a href='https://bitbucket.org/lamba' title='Bitbucket'>
+					          <i class='fa fa-bitbucket fa-3x icon'></i>
+					        </a>					        
+					        <a href='http://codepen.io/lamba/' title='Codepen'>
+					          <i class='fa fa-codepen fa-3x icon'></i>
+					        </a>					        
+					        <a href='https://lamba.slack.com/' title='Slack'>
+					          <i class='fa fa-slack fa-3x icon'></i>
+					        </a>					        
 						</div>
 					</div>
 					<div ng-include src="'footer.html'"></div>
@@ -313,11 +343,16 @@
 		</script>
 		<script type="text/ng-template" id="nav.html">
 			<div ng-controller="NavController">
-				<div class="welcome" ng-hide="isLoggedInUser()">
-				  	Welcome, <label class="loggedInUser"></label>! <a href="#home" ng-click="logout(vm.loggedInUser)">Sign Out</a>
-				</div>
-				<div class="signinOrRegister" ng-show="isLoggedInUser()">
-				  	<a href="#signin">Sign In</a> or <a href="#signup">Sign Up</a>
+				<div class="welcome-container">
+					<div class="welcome" ng-hide="isLoggedInUser()">
+					  	Welcome, <label class="loggedInUser"></label>! <a href="#home" ng-click="logout(vm.loggedInUser)">Sign Out</a>
+					</div>
+					<div class="signinOrRegister" ng-show="isLoggedInUser()">
+					  	<a href="#signin">Sign In</a> or <a href="#signup">Sign Up</a>
+					</div>
+					<div class="dev" ng-show="isDevModeEnabled()">
+						Dev Mode Enabled!
+					</div>
 				</div>
 				<ul class="nav nav-pills nav-justified">
 					<li role="presentation" ng-class="{active:isActive('/home')}">
@@ -344,7 +379,7 @@
 					&copy; <a href="http://inventica.com">Inventica.com</a>, 2014.
 				</div>
 				<div class="footer-version pull-right">
-					v0.2.0v
+					v0.2.1
 				</div>
 			</div>
 		</script>
@@ -426,14 +461,18 @@
 		<script>
 			(function(){
 				'use strict';
-				//var serverUrlPrefix = 'http://localhost';
-				var serverUrlPrefix = 'https://lamba-todos.herokuapp.com';
-				//to test 404 error
-				//var serverUrlPrefix = 'https://lambda-todos.herokuapp.com';
 				var
 					//60 characters fit easily, but only 56 numerals fit
-					maxTodoLength = 56;
+					maxTodoLength = 56,
+					isDevMode = false,
+					serverUrlPrefix;
 					//loggedInUser = null;
+
+				if (isDevMode) {
+					serverUrlPrefix = 'http://localhost:700';
+				} else {
+					serverUrlPrefix = 'https://lamba-todos.herokuapp.com';
+				};
 
 				//setter
 				angular
@@ -645,12 +684,17 @@
 							vm.signupUser, //action/request parameters
 							vm.signupUser, //post data
 							function(success_data){ //success callback
-								console.log('success_data='+JSON.stringify(success_data));
-								//$scope.loggedInUser = new User();
-								//angular.element('.signinOrRegister').hide();
-								toastr.success("Signup Completed.")
-								$location.path('#signin');
-								//$window.location = "#home";
+								var response = JSON.stringify(success_data);
+								console.log('success_data='+response);
+								if (response.toLowerCase().indexOf("error") > -1) {
+									toastr.warning(success_data.error);
+								} else {
+									//$scope.loggedInUser = new User();
+									//angular.element('.signinOrRegister').hide();
+									toastr.success("Signup Completed.")
+									$location.path('#signin');
+									//$window.location = "#home";
+								};
 							},
 							function(error){ //error callback
 								console.log('error:'+JSON.stringify(error));
@@ -669,6 +713,7 @@
 								[
 									{'feature':"Editing todos (ContentEditable) doesn't allow navigation using arrow keys"},
 									{'feature':'Redirect to signin after successful signup is not working; redirects to home'},
+									{'feature':'Display friendly error for email already registered'},
 									{'feature':'404 error on /home'}
 								]
 						},
@@ -678,6 +723,7 @@
 								[
 									{'feature':'Allow undo on mark completed'},
 									{'feature':'Limit number of todos (currently set to 100)'},
+									{'feature':'Prevent creation of empty todo'},
 									{'feature':'Add history tab'},
 									{'feature':'Create API for full db extract to JSON'},
 									{'feature':'Send email to validate signup/registration'},
@@ -686,7 +732,7 @@
 									{'feature':'Lock down CORS implementation to specific domain'},
 									{'feature':'Implement admin user role'},
 									{'feature':'Set font and size'},
-									{'feature':'Add suite of tests using Selenium, WebDriver, Protractor'},
+									{'feature':'Add tests to suite of tests using Selenium, WebDriver, Protractor'},
 									{'feature':'Replace contact links with icons'},
 									{'feature':'Try PhoneGap to create iOS and Android versions of this app'},
 									{'feature':'Add todo count'},
@@ -710,10 +756,21 @@
 					//vm.features = [{feature:'feature1'},{feature:'feature2'}];
 					vm.features = [
 						{
+							'release':'v0.2.1',
+							'features':
+								[
+									{'feature':'Added tests for signup, signin'},
+									{'feature':'Display warning when in development mode (local server/db)'},
+									{'feature':'Separated out CSS to own file and integrated with Gulp/Sass'},
+									{'feature':'Added more links/glyphs on contact page'}
+								]
+						},
+						{
 							'release':'v0.2.0',
 							'features':
 								[
 									{'feature':'Rewrite of client-side using AngularJS and Bootstrap'},
+									{'feature':'Created suite of tests using Selenium, WebDriver, Protractor'},
 									{'feature':'Allow inline/inplace editing of todos'},
 									{'feature':'Use of CORS to decouple client and server'}
 								]
@@ -823,6 +880,9 @@
 					//console.log('NavController');
 					console.log('LoggedInUser.getEmail()='+LoggedInUser.getEmail());
 					angular.element('.loggedInUser').text(LoggedInUser.getEmail());
+					if (isDevMode) {
+						toastr.warning('Dev Mode Enabled!')
+					};
 					$scope.isActive = function(viewLocation){
 						//console.log('isActive');
 						return viewLocation === $location.path();
@@ -839,6 +899,10 @@
 						LoggedInUser.setEmail('');
 						console.log('LoggedInUser.getEmail()='+LoggedInUser.getEmail());
 						$location.path('#home');
+					};
+					$scope.isDevModeEnabled = function() {
+						//console.log('isDevMode='+isDevMode);
+						return false; //isDevMode;
 					};
 				};
 
