@@ -379,7 +379,7 @@
 					&copy; <a href="http://inventica.com">Inventica.com</a>, 2014-2017.
 				</div>
 				<div class="footer-version pull-right">
-					v0.2.3
+					v0.2.4
 				</div>
 			</div>
 		</script>
@@ -480,7 +480,7 @@
 					
 					//use uppercase to indicate constructor
 					//Controller As syntax
-					//adding a second controller gets rid of the unknown provider $routeProvider error!
+					//adding a second controller gets rid of the "unknown provider $routeProvider" error!
 					.controller('HomeControllerAs', HomeControllerAs)
 					.controller('SigninControllerAs', ['$scope', '$location', 'User', 'LoggedInUser', '$http', SigninControllerAs])
 					.controller('SignupControllerAs', SignupControllerAs)
@@ -937,7 +937,9 @@
 				function HomeControllerAs($scope, Todo, LoggedInUser) {
 					console.log('HomeControllerAs');
 					//console.log('vm.loggedInUser='+JSON.stringify(vm.loggedInUser));
-					toastr.success("Welcome!");
+					if(LoggedInUser.getEmail() === ''){
+						toastr.success("Welcome!")
+					};
 					var vm = this;
 					//params supplied here override those supplied in the resource definition inside the service
 					vm.todos = Todo.query({email:LoggedInUser.getEmail()}, function(){ 
@@ -963,10 +965,15 @@
 
 					$scope.addTodo = function() {
 						console.log('addTodo with description:'+vm.newTodo);
+						
 						//var todo = new Todo();
 						//using remove because behavior for non-standard methods is funky
 						//TODO: map node methods to standard angular actions
-						toastr.info("Processing...");
+
+						//seems like noise, 
+						//especially since is shows AFTER the success toastr
+						//toastr.info("Processing...");
+						
 						Todo.create(
 							{
 								email:LoggedInUser.getEmail() === '' ? 'Anonymous' : LoggedInUser.getEmail(),
