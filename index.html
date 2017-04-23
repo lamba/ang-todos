@@ -379,7 +379,7 @@
 					&copy; <a href="http://inventica.com">Inventica.com</a>, 2014-2017.
 				</div>
 				<div class="footer-version pull-right">
-					v0.2.2
+					v0.2.3
 				</div>
 			</div>
 		</script>
@@ -464,12 +464,12 @@
 				var
 					//60 characters fit easily, but only 56 numerals fit
 					maxTodoLength = 56,
-					isDevMode = false,
+					isDevMode = false, //UNDO PRIOR TO GITHUB CHECKIN / HEROKU DEPLOY
 					serverUrlPrefix;
 					//loggedInUser = null;
 
 				if (isDevMode) {
-					serverUrlPrefix = 'http://localhost:700';
+					serverUrlPrefix = 'http://localhost:8080';
 				} else {
 					serverUrlPrefix = 'https://lamba-todos.herokuapp.com';
 				};
@@ -966,7 +966,7 @@
 						//var todo = new Todo();
 						//using remove because behavior for non-standard methods is funky
 						//TODO: map node methods to standard angular actions
-
+						toastr.info("Processing...");
 						Todo.create(
 							{
 								email:LoggedInUser.getEmail() === '' ? 'Anonymous' : LoggedInUser.getEmail(),

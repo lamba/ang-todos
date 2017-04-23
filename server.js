@@ -1,3 +1,4 @@
+//server for ang-todos
 var 
   express,
 	http,
@@ -5,7 +6,7 @@ var
 	session,
   port,
 	server,
-	todosVersion = "v0.2.1",
+	todosVersion = "v0.2.3",
 	sid,
 
 	//functions
@@ -16,7 +17,7 @@ express = require("express");
 http = require("http");
 session = require("express-session");
 
-port = 800;
+port = 7000;
 server = express();
 
 server.use(express.static(__dirname + "/"));
