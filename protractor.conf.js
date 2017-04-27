@@ -4,6 +4,7 @@
 
 exports.config = {
   seleniumAddress: 'http://localhost:4444/wd/hub',
+  directconnect: true,
   specs: [
     'ang-todos-signup-spec.js',
     'ang-todos-signin-spec.js',
@@ -29,5 +30,20 @@ exports.config = {
   //   'version': '11'
   // }
   ],
-  baseUrl: 'http://localhost:800'
+  
+  framework: 'jasmine',
+
+  specs: ['ang-todos-add-spec'],
+
+  baseUrl: 'http://localhost:7000',
+
+  params: {
+    restUrl: 'http://localhost:8080'
+  },
+
+  onPrepare: function() {
+    browser.driver.get(browser.baseUrl);
+    browser.manage().window().setSize(1600, 1000);
+  }
+
 };

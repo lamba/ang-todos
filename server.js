@@ -6,7 +6,7 @@ var
 	session,
   port,
 	server,
-	todosVersion = "v0.2.4",
+	todosVersion = "v0.2.5",
 	sid,
 
 	//functions

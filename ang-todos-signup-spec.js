@@ -14,7 +14,8 @@ describe('ang-todos', function() {
     emailExisting = "testexisting@email.com",
     passwordExisting = "123",
     dfd,
-    prm;
+    prm,
+    request = require('request');
 
   beforeEach(function() {
     dfd = protractor.promise.defer();
@@ -31,13 +32,31 @@ describe('ang-todos', function() {
     });
   });
 
-  it('should prevent existing user from signup', function() {
-    element(by.linkText('Sign Up')).click().then(function(){
-      element(by.model('vm.signupUser.email')).sendKeys(emailExisting);
-      element(by.model('vm.signupUser.password')).sendKeys(passwordExisting);
-      element(by.tagName('button')).click();
-      expect(browser.getCurrentUrl()).toContain('#/signup');
+  // it('should prevent existing user from signup', function() {
+  //   element(by.linkText('Sign Up')).click().then(function(){
+  //     element(by.model('vm.signupUser.email')).sendKeys(emailExisting);
+  //     element(by.model('vm.signupUser.password')).sendKeys(passwordExisting);
+  //     element(by.tagName('button')).click();
+  //     expect(browser.getCurrentUrl()).toContain('#/signup');
+  //   });
+  // });
+
+  afterEach(function(){
+    var jar = request.jar();
+    var req = request.defaults({
+        jar : jar
     });
+    function delNewUser(){
+      console.log("Deleting new user: " + emailNew);
+      req.delete(browser.params.restUrl + "/api/user?email=" + emailNew, function(error, success){
+        if (error === null) {
+          console.log("Deleted new user: " + emailNew);
+        } else {
+          console.log("Error: " + error);
+        }
+      });
+    };
+    delNewUser();
   });
 
 });

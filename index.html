@@ -379,7 +379,7 @@
 					&copy; <a href="http://inventica.com">Inventica.com</a>, 2014-2017.
 				</div>
 				<div class="footer-version pull-right">
-					v0.2.4
+					v0.2.5
 				</div>
 			</div>
 		</script>
@@ -461,6 +461,7 @@
 		<script>
 			(function(){
 				'use strict';
+
 				var
 					//60 characters fit easily, but only 56 numerals fit
 					maxTodoLength = 56,
@@ -469,6 +470,11 @@
 					//loggedInUser = null;
 
 				if (isDevMode) {
+					// How long the toast will display without user interaction
+					toastr.options.timeOut = 10; 
+					// How long the toast will display after a user hovers over it
+					toastr.options.extendedTimeOut = 10; 
+
 					serverUrlPrefix = 'http://localhost:8080';
 				} else {
 					serverUrlPrefix = 'https://lamba-todos.herokuapp.com';

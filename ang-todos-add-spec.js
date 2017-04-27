@@ -7,6 +7,10 @@
 //Error: Timed out waiting for Protractor to synchronize with the page after 11 seconds.
 describe('ang-todos', function() {
 
+  browser.ignoreSynchronization = true;
+  browser.waitForAngular();
+  browser.sleep(500); 
+
   var 
     todoList,
     testCount = 0,
