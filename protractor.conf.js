@@ -3,8 +3,11 @@
 //var jQuery = require('node_modules/jquery/jquery.js');
 
 exports.config = {
+
   seleniumAddress: 'http://localhost:4444/wd/hub',
+
   directconnect: true,
+
   specs: [
     'ang-todos-signup-spec.js',
     'ang-todos-signin-spec.js',
@@ -13,14 +16,17 @@ exports.config = {
     'ang-todos-remove-spec.js',
     'ang-todos-edit-spec.js'
   ],
+
   // seleniumArgs: {
   //   'browserName':'chrome',
   //   'browserName':'firefox'
   // },
+
   multiCapabilities: [
-  {
-    'browserName':'chrome',
-  },
+    {
+      'browserName':'chrome',
+    },
+
   // {
   //   'browserName':'firefox' //known issue: doesn't work on ff35
   // },
@@ -32,8 +38,6 @@ exports.config = {
   ],
   
   framework: 'jasmine',
-
-  specs: ['ang-todos-add-spec'],
 
   baseUrl: 'http://localhost:7000',
 

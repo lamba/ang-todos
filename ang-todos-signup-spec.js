@@ -32,14 +32,14 @@ describe('ang-todos', function() {
     });
   });
 
-  // it('should prevent existing user from signup', function() {
-  //   element(by.linkText('Sign Up')).click().then(function(){
-  //     element(by.model('vm.signupUser.email')).sendKeys(emailExisting);
-  //     element(by.model('vm.signupUser.password')).sendKeys(passwordExisting);
-  //     element(by.tagName('button')).click();
-  //     expect(browser.getCurrentUrl()).toContain('#/signup');
-  //   });
-  // });
+  it('should prevent existing user from signup', function() {
+    element(by.linkText('Sign Up')).click().then(function(){
+      element(by.model('vm.signupUser.email')).sendKeys(emailExisting);
+      element(by.model('vm.signupUser.password')).sendKeys(passwordExisting);
+      element(by.tagName('button')).click();
+      expect(browser.getCurrentUrl()).toContain('#/signup');
+    });
+  });
 
   afterEach(function(){
     var jar = request.jar();
