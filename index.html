@@ -379,7 +379,7 @@
 					&copy; <a href="http://inventica.com">Inventica.com</a>, 2014-2017.
 				</div>
 				<div class="footer-version pull-right">
-					v0.2.6
+					v0.2.7
 				</div>
 			</div>
 		</script>
@@ -465,7 +465,7 @@
 				var
 					//60 characters fit easily, but only 56 numerals fit
 					maxTodoLength = 56,
-					isDevMode = false, //UNDO PRIOR TO GITHUB CHECKIN / HEROKU DEPLOY
+					isDevMode = true, //UNDO PRIOR TO GITHUB CHECKIN / HEROKU DEPLOY
 					serverUrlPrefix;
 					//loggedInUser = null;
 
@@ -576,7 +576,8 @@
 								isArray: false
 							},
 							'register': {
-								method: 'POST'
+								method: 'POST',
+								timeout: 3000
 							}							
 						}
 					);
@@ -643,7 +644,7 @@
 								} else {
 									LoggedInUser.setEmail(vm.signinUser.email);
 									LoggedInUser.setRememberMe(vm.signinUser.rememberMe);
-									//REMEMBER: COOKIES *ONLY* WORK UNLESS YOU'RE RUNNING ON A WEB SERVER!
+									//REMEMBER: COOKIES *ONLY* WORK IF YOU'RE RUNNING ON A WEB SERVER!
 									if (LoggedInUser.getRememberMe()) {
 									 	jQuery.cookie('email', LoggedInUser.getEmail(), {expires:365, httpOnly:false});
 									 	toastr.success("Cookie Created");
@@ -698,7 +699,7 @@
 									//$scope.loggedInUser = new User();
 									//angular.element('.signinOrRegister').hide();
 									toastr.success("Signup Completed.")
-									$location.path('#signin');
+									$location.path('/signin');
 									//$window.location = "#home";
 								};
 							},
@@ -717,19 +718,14 @@
 							'release':'Known Issues',
 							'features':
 								[
-									{'feature':"Editing todos (ContentEditable) doesn't allow navigation using arrow keys"},
-									{'feature':'Redirect to signin after successful signup is not working; redirects to home'},
-									{'feature':'Display friendly error for email already registered'},
-									{'feature':'404 error on /home'}
+									{'feature':'404 error on manually entered url, e.g .../home'}
 								]
 						},
 						{
 							'release':'Backlog',
 							'features':
 								[
-									{'feature':'Allow undo on mark completed'},
 									{'feature':'Limit number of todos (currently set to 100)'},
-									{'feature':'Prevent creation of empty todo'},
 									{'feature':'Add history tab'},
 									{'feature':'Create API for full db extract to JSON'},
 									{'feature':'Send email to validate signup/registration'},
@@ -738,18 +734,14 @@
 									{'feature':'Lock down CORS implementation to specific domain'},
 									{'feature':'Implement admin user role'},
 									{'feature':'Set font and size'},
-									{'feature':'Add tests to suite of tests using Selenium, WebDriver, Protractor'},
-									{'feature':'Replace contact links with icons'},
+									{'feature':'Add more tests to suite of tests using Selenium, WebDriver, Protractor'},
 									{'feature':'Try PhoneGap to create iOS and Android versions of this app'},
 									{'feature':'Add todo count'},
 									{'feature':'Show in progress animation when loading'},
 									{'feature':'Settings tab with color scheme picker'},
 									{'feature':'Allow upload of background image'},
-									{'feature':'Show in progress animation when loading'},
 									{'feature':'Maintain login session upon browser refresh'},
-									{'feature':'Add history tab'},
 									{'feature':'Improve mobile experience'},
-									{'feature':'Try phonegap to create ios/android app'},
 									{'feature':'Add drag and drop ability to reorder todos'}
 								]
 						}
@@ -762,13 +754,28 @@
 					//vm.features = [{feature:'feature1'},{feature:'feature2'}];
 					vm.features = [
 						{
+							'release':'v0.2.7',
+							'features':
+								[
+									{'feature':'Allow undo on mark completed'},
+									{'feature':'HTTP timeout for CORS calls'},
+									{'feature':'Browser resize during tests so addTodo button is clickable'},
+									{'feature':'Prevent creation of empty todo'},
+									{'feature':'Delete user API to facilitate repeatable create user test'},
+									{'feature':'Redirect to signin after signup success'},
+									{'feature':'Friendly error for email already registered'},
+									{'feature':'Allow navigation using arrow keys while editing todos'},
+									{'feature':'Regex validation of email during signup'}
+								]
+						},
+						{
 							'release':'v0.2.1',
 							'features':
 								[
-									{'feature':'Added tests for signup, signin'},
+									{'feature':'Tests for signup, signin'},
 									{'feature':'Display warning when in development mode (local server/db)'},
 									{'feature':'Separated out CSS to own file and integrated with Gulp/Sass'},
-									{'feature':'Added more links/glyphs on contact page'}
+									{'feature':'More links/glyphs on contact page'}
 								]
 						},
 						{
@@ -854,16 +861,19 @@
 						{text:'AJAX'},
 						{text:'JSON'},
 						{text:'jQueryUI'},
-						{text:'Touch Punch'},
+						{text:'Touch Punch (for mobile compatibility)'},
+						{text:'ContentEditable (for inline editing of todos)'},
 						{text:'jQuery Sticky Notes'},
-						{text:'Toastr'},
+						{text:'Toastr (for UI notifications)'},
 						{text:'NodeJS'},
-						{text:'BCrypt'},
-						{text:'Mongoose'},
+						{text:'NPM (Package manager built on NodeJS)'},
+						{text:'BCrypt (for password encryption)'},
+						{text:'Mongoose (MongoDB connectivity library'},
 						{text:'MongoDB'},
-						{text:'Heroku PaaS with SSL'},
+						{text:'Heroku PaaS with SSL (cloud hosting, built on AWS, with tight GitHub integration)'},
 						{text:'AngularJS'},
-						{text:'Bootstrap'}
+						{text:'Bootstrap (for responsive design)'},
+						{text:'Protractor, WebDriver, Selenium (for automated integration testing)'}
 					];
 					$scope.techstack = function(){
 						//console.log('techstack');
@@ -971,6 +981,12 @@
 
 					$scope.addTodo = function() {
 						console.log('addTodo with description:'+vm.newTodo);
+
+						if (!vm.newTodo) { //undefined
+							console.log('Invalid todo: ' + vm.newTodo);
+							toastr.warning('Invalid todo: ' + vm.newTodo);
+							return false;
+						}
 						
 						//var todo = new Todo();
 						//using remove because behavior for non-standard methods is funky
